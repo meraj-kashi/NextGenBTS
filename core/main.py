@@ -2,8 +2,9 @@ from flask import Flask,render_template,redirect, url_for, request, session
 from functools import wraps
 import requests
 import secrets
-import jsonify
+import subprocess
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 login_secret_key = secrets.token_hex(16)
 
@@ -16,6 +17,13 @@ collection = db['BTSList']
 
 
 app = Flask(__name__)
+
+def ip_status(ip):
+    result = subprocess.run(['ping', '-c', '4', ip], capture_output=True, text=True, timeout=10)
+    if result.returncode == 0:
+        return 0
+    else:
+        return 1
 
 @app.route('/' , methods=['GET', 'POST'])
 def login():
@@ -69,11 +77,8 @@ def logout():
 @app.route('/home', methods=['GET'])
 @login_required
 def home():
-    items = [
-        {'name': 'Item 1', 'ip': '192.168.1.1', 'status': 'Active'},
-        {'name': 'Item 2', 'ip': '192.168.1.2', 'status': 'Inactive'},
-        {'name': 'Item 3', 'ip': '192.168.1.3', 'status': 'Active'}
-    ]
+    items = collection.find()
+
     return render_template('index.html', items=items)
 
 @app.route('/add', methods=['POST'])
@@ -82,11 +87,34 @@ def add_item():
     ip = request.json.get('ip')
 
     if name and ip:
-        item = {'name': name, 'ip': ip}
+        if ip_status(ip) == 0:
+            status = "connected"
+        else:
+            status = "disconnected"
+
+        item = {'name': name, 'ip': ip, 'status': status}
         collection.insert_one(item)
-        return jsonify({'message': 'Item added successfully'})
+
+        return {'message': 'BTS added successfully'}
     else:
-        return jsonify({'error': 'Name and IP are required'}), 400
+        return {'message': 'BTS ID and IP are required'}
+
+@app.route('/remove', methods=['POST'])
+def remove_item():
+    print("hereeee")
+    item_id = request.json.get('id')
+    print(item_id)
+
+    if item_id:
+        result = collection.delete_one({'_id': ObjectId(item_id)})
+
+        if result.deleted_count > 0:
+            return {'message': 'BTS removed successfully'}
+        else:
+            return {'error': 'BTS not found'}, 404
+    else:
+        return {'error': 'Invalid request'}, 400
+
 
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = login_secret_key
