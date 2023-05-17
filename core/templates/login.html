@@ -25,6 +25,10 @@
             <div class="card-body">
                 <img src="{{ url_for('static', filename='NextGenBTS.png') }}" class="company-icon" alt="Company Icon" width="100" height="100">
                 <h4 class="card-title text-center">Login to NextGenBTS</h4>
+                <h2>Login</h2>
+                {% if error_message %}
+                <p>{{ error_message }}</p>
+                {% endif %}
                 <form action="{{ url_for('login') }}" method="POST">
                     <div class="form-group">
                         <label for="username">Username:</label>
