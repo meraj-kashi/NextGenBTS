@@ -1,6 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var addForm = document.getElementById('add-form');
+        var tableBody = document.querySelector('.fancy-table tbody');
+    
+        addForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+    
+            var nameInput = document.getElementById('name-input');
+            var ipInput = document.getElementById('ip-input');
+            var name = nameInput.value.trim();
+            var ip = ipInput.value.trim();
+    
+            if (name && ip) {
+                var data = {
+                    name: name,
+                    ip: ip
+                };
+    
+                fetch('/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Error: ' + response.statusText);
+                    }
+                })
+                .then(function(result) {
+                    var newRow = document.createElement('tr');
+                    messageContainer.innerHTML = '';
+
+                    newRow.innerHTML = `
+                        <td>${tableBody.childElementCount + 1}</td>
+                        <td>${name}</td>
+                        <td>${ip}</td>
+                        <td>Status</td>
+                    `;
+                    tableBody.appendChild(newRow);
+    
+                    nameInput.value = '';
+                    ipInput.value = '';
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+            }
+        });
+    });
+    
+    </script>
+
     <title>NextGenBTS</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <style>
@@ -117,6 +174,7 @@
     
 </head>
 <body>
+    <div id="message-container"></div>
     <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
         <button type="submit" class="logout-button">Logout</button>
     </form>

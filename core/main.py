@@ -2,11 +2,17 @@ from flask import Flask,render_template,redirect, url_for, request, session
 from functools import wraps
 import requests
 import secrets
+import jsonify
+from pymongo import MongoClient
 
 login_secret_key = secrets.token_hex(16)
 
 vault_addr='http://0.0.0.0:8200'
 vault_token='hvs.kgdsZI7luWko8C7KohLNSK9H'
+
+client = MongoClient('mongodb://user:pass@0.0.0.0:27017')
+db = client['NextGenBTS']
+collection = db['BTSList']
 
 
 app = Flask(__name__)
@@ -60,27 +66,27 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-@app.route('/home')
+@app.route('/home', methods=['GET'])
 @login_required
 def home():
-    @app.route('/add', methods=['POST'])
-def add_item():
-    name = request.form.get('name')
-    ip = request.form.get('ip')
-
-    if name and ip:
-        item = {'name': name, 'ip': ip}
-        collection.insert_one(item)
-        return 'Item added successfully'
-    else:
-        return 'Error: Name and IP are required'
-
     items = [
         {'name': 'Item 1', 'ip': '192.168.1.1', 'status': 'Active'},
         {'name': 'Item 2', 'ip': '192.168.1.2', 'status': 'Inactive'},
         {'name': 'Item 3', 'ip': '192.168.1.3', 'status': 'Active'}
     ]
     return render_template('index.html', items=items)
+
+@app.route('/add', methods=['POST'])
+def add_item():
+    name = request.json.get('name')
+    ip = request.json.get('ip')
+
+    if name and ip:
+        item = {'name': name, 'ip': ip}
+        collection.insert_one(item)
+        return jsonify({'message': 'Item added successfully'})
+    else:
+        return jsonify({'error': 'Name and IP are required'}), 400
 
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = login_secret_key
