@@ -3,17 +3,22 @@ from functools import wraps
 import requests
 import secrets
 import subprocess
+import json
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
+# Load config from file
+with open('config.json') as config_file:
+    config = json.load(config_file)
+
 login_secret_key = secrets.token_hex(16)
 
-vault_addr='http://0.0.0.0:8200'
-vault_token='hvs.kgdsZI7luWko8C7KohLNSK9H'
+vault_addr=f"http://{config['secret']['host']}:{config['secret']['port']}"
+vault_token=config['secret']['token']
 
-client = MongoClient('mongodb://user:pass@0.0.0.0:27017')
-db = client['NextGenBTS']
-collection = db['BTSList']
+client = MongoClient(f"mongodb://{config['database']['username']}:{config['database']['password']}@{config['database']['host']}:{config['database']['port']}")
+db = client[config['database']['name']]
+collection = db[config['database']['collection']]
 
 
 app = Flask(__name__)

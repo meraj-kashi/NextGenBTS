@@ -1,0 +1,16 @@
+{
+        "database": {
+          "host": "0.0.0.0",
+          "port": 27017,
+          "name": "NextGenBTS",
+          "collection": "BTSList",
+          "username": "user",
+          "password": "pass" 
+        },
+        "secret": {
+            "host":"0.0.0.0",
+            "port": 8200, 
+            "token" : "hvs.kgdsZI7luWko8C7KohLNSK9H"
+        }
+      
+}

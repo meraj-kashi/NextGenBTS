@@ -8,3 +8,10 @@ python3 -m venv .venv
 Note: sudo apt install python3.10-venv  
 source .venv/bin/activate
 
+# Vault setup
+
+# MongoDB setup
+
+# Docker-compose
+
+# Disk persistency
