@@ -127,3 +127,20 @@ body {
             border: none;
             cursor: pointer;
         }
+
+    .refresh-button {
+            padding: 5px 10px;
+            background-color: #d4ff00;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+        }
+
+.message {
+    background-color: #f2f2f2;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  

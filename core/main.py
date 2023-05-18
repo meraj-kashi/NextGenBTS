@@ -24,11 +24,17 @@ collection = db[config['database']['collection']]
 app = Flask(__name__)
 
 def ip_status(ip):
-    result = subprocess.run(['ping', '-c', '4', ip], capture_output=True, text=True, timeout=10)
-    if result.returncode == 0:
-        return 0
-    else:
-        return 1
+    if ip:
+        try:
+            result = subprocess.run(['ping', '-c', '4', ip], capture_output=True, text=True, timeout=10)
+            if result.returncode == 0:
+                return 0
+            else:
+                return 1
+        except subprocess.TimeoutExpired:
+            return 1
+        except subprocess.CalledProcessError as e:
+            return 1
 
 @app.route('/' , methods=['GET', 'POST'])
 def login():
@@ -93,28 +99,31 @@ def add_item():
 
     if name and ip:
         if ip_status(ip) == 0:
-            status = "connected"
+            connectivity = "connected"
         else:
-            status = "disconnected"
+            connectivity = "disconnected"
 
-        item = {'name': name, 'ip': ip, 'status': status}
+        item = {'name': name, 'ip': ip, 'connectivity': connectivity}
         collection.insert_one(item)
 
-        return {'message': 'BTS added successfully'}
+        response_item = {'connectivity': connectivity, 'message': f'{name} BTS added successfully'}
+
+        return response_item
     else:
         return {'message': 'BTS ID and IP are required'}
 
 @app.route('/remove', methods=['POST'])
 def remove_item():
-    print("hereeee")
     item_id = request.json.get('id')
-    print(item_id)
 
     if item_id:
+        document = collection.find_one({'_id': ObjectId(item_id)})
+        name = document['name']
+
         result = collection.delete_one({'_id': ObjectId(item_id)})
 
         if result.deleted_count > 0:
-            return {'message': 'BTS removed successfully'}
+            return {'message': f'{name} BTS removed successfully'}
         else:
             return {'error': 'BTS not found'}, 404
     else:

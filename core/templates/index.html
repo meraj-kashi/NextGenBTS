@@ -7,7 +7,7 @@
     
 </head>
 <body>
-    <div id="message-container"></div>
+    <div id="message-container" class="message"></div>
     <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
         <button type="submit" class="logout-button">Logout</button>
     </form>
@@ -33,7 +33,7 @@
                 <th>Number</th>
                 <th>Node ID</th>
                 <th>IP</th>
-                <th>Status</th>
+                <th>Connectivity</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -43,7 +43,7 @@
                 <td>{{ loop.index }}</td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.ip }}</td>
-                <td>{{ item.status }}</td>
+                <td>{{ item.connectivity }}</td>
                 <td><button class="remove-button" data-id="{{ item._id }}">Remove</button></td>
             </tr>
             {% endfor %}

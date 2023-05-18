@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${tableBody.childElementCount + 1}</td>
                     <td>${name}</td>
                     <td>${ip}</td>
-                    <td>${status}</td>
+                    <td>${result.connectivity}</td>
                 `;
                 tableBody.appendChild(newRow);
 

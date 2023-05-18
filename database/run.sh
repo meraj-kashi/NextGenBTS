@@ -1,0 +1,1 @@
+docker run -it -d -p "27017:27017" --env MONGO_INITDB_ROOT_USERNAME=user --env MONGO_INITDB_ROOT_PASSWORD=pass --volume "dbdata:/data/db" --name "database-mongo" mongodb/mongodb-community-server:6.0-ubi8 
