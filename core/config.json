@@ -1,6 +1,6 @@
 {
         "database": {
-          "host": "10.10.10.120",
+          "host": "nextgenbts_mongodb",
           "port": 27017,
           "name": "NextGenBTS",
           "collection": "BTSList",
@@ -8,8 +8,8 @@
           "password": "pass" 
         },
         "secret": {
-            "host":"10.10.10.120",
-            "port": 8300, 
+            "host":"nextgenbts_vault",
+            "port": 8200, 
             "token" : "myroot"
         }
       

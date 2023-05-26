@@ -6,5 +6,4 @@ export VAULT_TOKEN="myroot"
 vault login token=$VAULT_TOKEN
 
 vault secrets enable -path=NextGenBTS/userLogin kv-v2
-
-#vault kv put -mount=NextGenBTS/userLogin admin username=admin password=admin
+vault kv put NextGenBTS/userLogin/admin username=admin password=secretpassword

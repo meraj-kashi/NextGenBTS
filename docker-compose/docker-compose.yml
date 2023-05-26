@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  core:
+    build:
+      context: ../core
+      dockerfile: Dockerfile
+    container_name: nextgenbts_core
+    ports:
+      - 5000:5000
+    networks:
+      - nextgennetwork
+    depends_on:
+      - vault
+      - mongodb
+
+  vault:
+    image: vault
+    container_name: nextgenbts_vault
+    ports:
+      - 8300:8200
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=myroot
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    volumes:
+      - ./vault/data:/data
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - nextgennetwork
+  mongodb:
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    container_name: nextgenbts_mongodb
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=user
+      - MONGODB_INITDB_ROOT_PASSWORD=pass
+    ports:
+      - 27017:27017
+    volumes:
+      - ../database/dbdata:/data
+    networks:
+      - nextgennetwork
+networks:
+    nextgennetwork:
