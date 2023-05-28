@@ -9,12 +9,5 @@ Note: sudo apt install python3.10-venv
 source .venv/bin/activate
 pip3 install -r requirements.txt
 
-## Dependencies  
-
-# Vault setup
-
-# MongoDB setup
-
-# Docker-compose
-
-# Disk persistency
+### More information  
+Check my weblog: [cloudynotes.io](https://cloudynotes.io/trainings/docker/nextgenbts.html)  
